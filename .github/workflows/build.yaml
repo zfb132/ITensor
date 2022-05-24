@@ -1,0 +1,96 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ test ]
+  pull_request:
+    branches: [ test ]
+
+jobs:
+  build2204_lapack:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: build
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make g++ liblapack-dev liblapacke-dev libopenblas-dev
+        sudo apt-get autoremove --purge -y
+        sudo apt-get autoclean -y
+        sudo rm -rf /var/cache/apt/* /var/lib/apt/lists/*
+
+        export PLATFORM=lapack
+        sed '/^PLATFORM=/,/^$/s/^/#/;/^#PLATFORM='$PLATFORM'$/,/^$/s/^#//' options.mk.sample > options.mk
+        make -j2
+        make -j2 -C sample
+        make -C unittest
+
+
+  build2204_openblas:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: build
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make g++ liblapack-dev liblapacke-dev libopenblas-dev
+        sudo apt-get autoremove --purge -y
+        sudo apt-get autoclean -y
+        sudo rm -rf /var/cache/apt/* /var/lib/apt/lists/*
+
+        export PLATFORM=openblas
+        sed '/^PLATFORM=/,/^$/s/^/#/;/^#PLATFORM='$PLATFORM'$/,/^$/s/^#//' options.mk.sample > options.mk
+        make -j2
+        make -j2 -C sample
+        make -C unittest
+
+
+  build2004_lapack:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: build
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make g++ liblapack-dev liblapacke-dev libopenblas-dev
+        sudo apt-get autoremove --purge -y
+        sudo apt-get autoclean -y
+        sudo rm -rf /var/cache/apt/* /var/lib/apt/lists/*
+
+        export PLATFORM=lapack
+        sed '/^PLATFORM=/,/^$/s/^/#/;/^#PLATFORM='$PLATFORM'$/,/^$/s/^#//' options.mk.sample > options.mk
+        make -j2
+        make -j2 -C sample
+        make -C unittest
+
+
+  build2004_openblas:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: build
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make g++ liblapack-dev liblapacke-dev libopenblas-dev
+        sudo apt-get autoremove --purge -y
+        sudo apt-get autoclean -y
+        sudo rm -rf /var/cache/apt/* /var/lib/apt/lists/*
+
+        export PLATFORM=openblas
+        sed '/^PLATFORM=/,/^$/s/^/#/;/^#PLATFORM='$PLATFORM'$/,/^$/s/^#//' options.mk.sample > options.mk
+        make -j2
+        make -j2 -C sample
+        make -C unittest
+
+
+  buildmacos_openblas:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: build
+      run: |
+        export PLATFORM=macos
+        sed '/^CCCOM=/s/ -fconcepts//;/^PLATFORM=/,/^$/s/^/#/;/^#PLATFORM='$PLATFORM'$/,/^$/s/^#//' options.mk.sample > options.mk
+        make -j2
+        make -j2 -C sample
+        make -C unittest
